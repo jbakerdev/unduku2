@@ -1,0 +1,59 @@
+Unduku 2
+
+Monster lairs placed on a pre-generated map
+    -Spawns creeps that attack buildings
+    -Can be destroyed by preist npc
+    -Destroying all lairs completes a map
+    -New lairs may be spawned by events
+    -Events may cause monster surge
+
+The town starts at your temple
+    -Direct where the town should expand
+    -Resource nodes under town control grant increased faith, civ level, or expansion
+    -If the town encompases a monster lair, a preist will be sent to attempt closure
+        -Closure success chance is based off faith and civ level depending on monster type
+        -If failed, town retreats one square from the lair and there is a monster surge
+    -Send expedition ability?
+
+Faith
+    -Level decreases when monsters destroy buildings (at low civ level), 
+        or are killed by the people
+    -Increases when monsters are killed by you, 
+        or you use an ability, 
+        or there is a disaster
+    -Faith determines what abilities you can use
+        -Rain, cause a field to progress
+        -Sun, stop a field from progressing
+        -Lightening, destroy one unit or building on a tile 
+        -Various disasters/plagues: Frogs, Tornado, Pestilence
+        -Avatar: bring the statue at the town center to life and use it to fight monsters
+    -Faith slowly decreases
+    -If faith reaches zero you lose
+    -Faith increased by offerings from the people
+
+
+POC:
+1. Render town center. The people will plant fields.
+    Render remains of previous empire: ruined roads, fields, buildings
+    Resource collectors can be repaired by expansion
+
+
+2. Render a monster lair of random type.
+    Monsters will trickle out and destroy buildings in the town.
+    If the town center is destroyed, you lose
+    Use Avatar to fight monsters for a big faith boost
+    Avatar can be used when faith is high
+3. Send rain to make fields grow.
+    Once a field is harvested, you can direct the town to be expanded 1 square.
+    Rain can be used any number of times. 2x per harvest is enough. 
+    Using it too much on an area causes floods.
+4. Send earthquake to mountains to make mineral resources appear. 
+    Earthquake has a long cooldown.
+    Destroys anything nearby.
+    Once the town encompases new type of resource they will build a mine.
+    Once the mine accumulates 3 stacks the civ level will increase.
+5. If civ level is high enough, 
+    the people will build defenses every few tiles.
+    the people will begin to develop scientific explainations for your powers and using them will no longer grant faith
+    lowering the civ level can reverse this effect. 
+    the civ level is lowered by loss of resource access, and disasters.
