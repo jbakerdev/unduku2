@@ -6,19 +6,11 @@ import { getResourceIndexOfCollector, findValue, getCollectorResourceTypeFromInd
 import { onAddResourceNode, onUpdatePlayerControl, onControlNode, onAddResource, onPlacedBuilding, onShowModal, onInitEngine, onUpdateJobXp, onMatchTick, onUpdatePlayer, onTakeJob, onRemoveJob, onUpdateBuilding, onRemoveBuilding, onUnlockRecipe } from "../uiManager/Thunks";
 import { _getCircle } from "../helpers/Fov";
 import { floatText, floatSprite, generateAnimationsForUnit, moveTowardXY, getWallIndexForNeighbors } from "../helpers/Canvas";
-import PlantNode from "./PlantNode";
-import ResourceNode from "./ResourceNode";
 import AStar from "../helpers/AStar";
-import MonsterDen from "./MonsterDen";
 import BuildingSprite from './BuildingSprite'
-import Portal from "./Portal"
 import Creep, { creepHitPlayer, creepHitBuilding, destroyCreep } from "./Creep";
 import MiniMap from "./MiniMap";
 import Player from "./PersonSprite";
-import Engineer from "../helpers/jobs/Engineer";
-import Magus from "../helpers/jobs/Magus";
-import Scout from "../helpers/jobs/Scout";
-import Soldier from "../helpers/jobs/Soldier";
 import PersonSprite from "./PersonSprite";
 
 export default class WorldScene extends Scene {
@@ -64,22 +56,6 @@ export default class WorldScene extends Scene {
         let player = uiState.party.find(p=>p.controlledById === uiState.myId)
         if(engineEvent)
             switch(engineEvent){
-                case UIReducerActions.TAKE_JOB:
-                case UIReducerActions.REPLACE_JOB:
-                case UIReducerActions.REMOVE_JOB:
-                    player = uiState.party.find(p=>p.controlledById === uiState.myId)
-                    this.updateUIForPlayer(player)
-                    break
-                case UIReducerActions.ADD_CONSUMABLE:
-                    ConsumableKeys.forEach(key=>this.input.keyboard.off('keydown-'+key))
-                    player.consumables.forEach((type:ConsumableType,i)=>{
-                        this.input.keyboard.on('keydown-'+ConsumableKeys[i], this.getDelegateForConsumable(type))
-                    })
-                    break
-                case UIReducerActions.ADD_SPELL:
-                case UIReducerActions.REPLACE_SPELL:
-                    this.updateUIForPlayer(uiState.party.find(p=>p.controlledById === uiState.myId))
-                    break
                 
             }
     }
@@ -93,7 +69,7 @@ export default class WorldScene extends Scene {
         this.creepProjectiles = this.physics.add.group()
         this.physics.add.overlap(this.creepProjectiles, this.peopleSprites, (creep:Creep,player:Player)=>creepHitPlayer(this, creep, player))
         this.physics.add.collider(this.creeps, this.peopleSprites, (creep:Creep,player:Player)=>creepHitPlayer(this, creep, player))
-        this.physics.add.collider(this.creeps, this.buildingSprites, (creep:Creep, building:BuildingSprite)=>creepHitBuilding(this, creep, building))
+        this.physics.add.collider(this.creepProjectiles, this.buildingSprites, (creep:Creep, building:BuildingSprite)=>creepHitBuilding(this, creep, building))
         this.physics.add.collider(this.creeps, this.creeps)
         this.physics.add.collider(this.creeps, this.collidingLayers)
         
@@ -159,17 +135,14 @@ export default class WorldScene extends Scene {
         this.map = this.make.tilemap({ key: 'map'})
         let terrain = this.map.addTilesetImage('terrain', 'terrain', 16,16,1,2)
         let features = this.map.addTilesetImage('obstacles', 'obstacles',16,16,1,2)
-        let roads = this.map.addTilesetImage('roads')
         
-        let water = this.map.createDynamicLayer('water', [terrain]).setCollisionByExclusion([-1])
+        let water = this.map.createDynamicLayer('water', terrain).setCollisionByExclusion([-1])
         this.collidingLayers.push(water)
-        this.map.createDynamicLayer('land', [terrain])
-        let rivers = this.map.createDynamicLayer('rivers', [terrain]).setCollisionByExclusion([-1])
-        this.collidingLayers.push(rivers)
-        this.collidingLayers.push(this.map.createDynamicLayer('features2', [features]).setCollisionByExclusion([-1]))
-        
-        this.collidingLayers.push(this.map.createDynamicLayer('features', [features]).setCollisionByExclusion([-1]))
-        
+        this.map.createDynamicLayer('terrain', terrain)
+        this.map.createDynamicLayer('doodads', terrain)
+        let obstacles = this.map.createDynamicLayer('obstacles', features).setCollisionByExclusion([-1])
+        this.collidingLayers.push(obstacles)
+
         this.tileData = [[]]
         this.collidingLayers.forEach(layer=>{
             layer.forEachTile(tile=>{
@@ -185,11 +158,12 @@ export default class WorldScene extends Scene {
             })
         })
 
-        this.townCenter = this.map.createFromObjects('object', 'town', { key: 'buildings', frame: SpriteIndexes.townCenter })[0]
-        this.add.existing(this.townCenter);
-        // let stocks = new BuildingSprite(this, this.theRift.x+48,this.theRift.y+16, BuildingType.STOCKPILE, false)
-        // this.modifyBlockingBuilding(stocks, true, false)
-        // stocks.on('pointerdown', ()=>onShowModal(stocks.typeOfBuilding))
+        this.map.createFromObjects('object', 'town', { key: 'temp', frame: 1 }).forEach(t=>{
+            this.townCenter = new BuildingSprite(this, t.x,t.y, BuildingType.TOWN_CENTER)
+            this.townCenter.on('pointerdown', ()=>onShowModal(BuildingType.TOWN_CENTER))
+            t.destroy()
+        })
+
         
     }
 

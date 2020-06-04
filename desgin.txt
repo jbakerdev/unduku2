@@ -27,6 +27,15 @@ Faith
         -Lightening, destroy one unit or building on a tile 
         -Various disasters/plagues: Frogs, Tornado, Pestilence
         -Avatar: bring the statue at the town center to life and use it to fight monsters
+            -Flight for Avatar
+            -Sprint
+            -Health
+            -Bolt strength/range/rate of fire
+            -Knockback
+            -Freeze
+            -Flaming
+            -Holy
+            -Petrify
     -Faith slowly decreases
     -If faith reaches zero you lose
     -Faith increased by offerings from the people
@@ -40,9 +49,11 @@ POC:
 
 2. Render a monster lair of random type.
     Monsters will trickle out and destroy buildings in the town.
-    If the town center is destroyed, you lose
+    If the town center is destroyed, or faith reaches 0, you lose
     Use Avatar to fight monsters for a big faith boost
-    Avatar can be used when faith is high
+    Avatar can be used on a long cooldown
+
+
 3. Send rain to make fields grow.
     Once a field is harvested, you can direct the town to be expanded 1 square.
     Rain can be used any number of times. 2x per harvest is enough. 

@@ -11,8 +11,8 @@ export default class BuildingSprite extends Physics.Arcade.Sprite {
     typeOfBuilding: BuildingType
     world:WorldScene
     
-    constructor(scene:Scene, x:number, y:number, buildingType:BuildingType, isDefense:boolean){
-        super(scene, x, y, isDefense ? 'walls': 'structures', BuildingSpriteIndexes[buildingType])
+    constructor(scene:Scene, x:number, y:number, buildingType:BuildingType){
+        super(scene, x, y, 'structures', BuildingSpriteIndexes[buildingType])
         scene.add.existing(this)
         scene.physics.add.existing(this)
         this.world = scene as WorldScene
@@ -20,6 +20,7 @@ export default class BuildingSprite extends Physics.Arcade.Sprite {
         this.typeOfBuilding = buildingType
         this.setImmovable(true)
         this.setCollideWorldBounds()
+        this.world.modifyBlockingBuilding(this, true, false)
         this.id = v4()
     }
 }
